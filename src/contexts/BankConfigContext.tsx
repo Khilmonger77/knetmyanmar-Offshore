@@ -21,15 +21,27 @@ export function BankConfigProvider({ children }: { children: ReactNode }) {
 
   const reload = useCallback(() => {
     const base = getApiBase()
-    fetch(`${base}/api/public/bank-config`)
-      .then((r) => r.json())
-      .then((data: { ok?: boolean; config?: BankConfig }) => {
+    fetch(`${base}/api/public/bank-config`, { cache: 'no-store' })
+      .then(async (r) => {
+        const ct = r.headers.get('content-type') ?? ''
+        if (!r.ok || !ct.includes('application/json')) {
+          throw new Error(`bank-config HTTP ${r.status}`)
+        }
+        return r.json() as Promise<{ ok?: boolean; config?: BankConfig }>
+      })
+      .then((data) => {
         if (data?.ok && data.config) {
           setConfig(data.config)
           setBankConfigHydrated(true)
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        if (import.meta.env.PROD && !String(getApiBase()).trim()) {
+          console.warn(
+            '[bywells] Could not load /api/public/bank-config. When the SPA is hosted separately (e.g. Netlify), set VITE_API_BASE to your API origin at build time and redeploy.',
+          )
+        }
+      })
   }, [])
 
   useEffect(() => {
@@ -43,9 +55,11 @@ export function BankConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!bankConfigHydrated) return
-    const name = String(config.bankName ?? '').trim()
-    if (name) document.title = name
-  }, [bankConfigHydrated, config.bankName])
+    const short = String(config.bankNameShort ?? '').trim()
+    const full = String(config.bankName ?? '').trim()
+    const tabTitle = short || full
+    if (tabTitle) document.title = tabTitle
+  }, [bankConfigHydrated, config.bankName, config.bankNameShort])
 
   useEffect(() => {
     const t = config.theme
