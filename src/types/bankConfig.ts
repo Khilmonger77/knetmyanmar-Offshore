@@ -108,6 +108,11 @@ export type BankConfig = {
    * API-served upload (e.g. `/api/media/home-hero.jpg`) or `https://…` CDN URL.
    */
   homeHeroImageSrc: string
+  /**
+   * Custom logo in headers, card art, and admin shell. Empty string = built-in mark.
+   * Same path rules as `homeHeroImageSrc` (e.g. `/api/media/bank-logo.png`).
+   */
+  bankLogoSrc: string
   homeCtaTalk: string
   signInDisclaimer: string
   supportPhone: string

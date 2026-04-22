@@ -43,7 +43,12 @@ export function PublicHeader() {
             className="group flex items-center gap-3.5 text-left text-white no-underline"
           >
             <span className="rounded-xl bg-white/10 p-1 ring-1 ring-white/15 transition group-hover:bg-white/15">
-              <LogoMark className="h-10 w-10 shrink-0" variant="light" />
+              <LogoMark
+                className="h-10 w-10 shrink-0"
+                variant="light"
+                imageSrc={cfg.bankLogoSrc || undefined}
+                alt=""
+              />
             </span>
             <div>
               <span className="font-display text-xl font-semibold tracking-tight sm:text-[1.35rem]">

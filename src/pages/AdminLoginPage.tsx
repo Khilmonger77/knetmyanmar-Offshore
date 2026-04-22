@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LogoMark } from '../components/LogoMark'
+import { useBankConfig } from '../contexts/BankConfigContext'
 import {
   getAdminToken,
   setAdminToken,
@@ -32,6 +33,7 @@ function ShieldIcon({ className = '' }: { className?: string }) {
 }
 
 export function AdminLoginPage() {
+  const cfg = useBankConfig()
   const navigate = useNavigate()
   const [secret, setSecret] = useState('')
   const [err, setErr] = useState('')
@@ -132,7 +134,12 @@ export function AdminLoginPage() {
             >
               <span aria-hidden>←</span> Public site
             </Link>
-            <LogoMark className="h-9 w-9 opacity-90" variant="dark" />
+            <LogoMark
+              className="h-9 w-9 opacity-90"
+              variant="dark"
+              imageSrc={cfg.bankLogoSrc || undefined}
+              alt=""
+            />
           </div>
 
           <div className="mx-auto w-full max-w-md rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-white/[0.02] p-8 shadow-[0_28px_80px_-24px_rgba(0,0,0,0.65)] backdrop-blur-xl ring-1 ring-white/[0.04] sm:p-10">

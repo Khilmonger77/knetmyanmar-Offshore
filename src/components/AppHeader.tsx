@@ -25,7 +25,12 @@ export function AppHeader() {
           className="flex items-center gap-3 text-bw-navy-900 no-underline"
         >
           <span className="rounded-xl bg-bw-sand-100 p-1 ring-1 ring-bw-sand-200">
-            <LogoMark className="h-9 w-9 shrink-0" variant="dark" />
+            <LogoMark
+              className="h-9 w-9 shrink-0"
+              variant="dark"
+              imageSrc={cfg.bankLogoSrc || undefined}
+              alt=""
+            />
           </span>
           <div>
             <span className="font-display text-lg font-semibold tracking-tight">

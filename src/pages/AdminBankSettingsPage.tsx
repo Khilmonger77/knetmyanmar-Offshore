@@ -15,6 +15,7 @@ import {
   fetchAdminBankConfig,
   fetchAdminSmtpSettings,
   getAdminToken,
+  postAdminBankLogo,
   postAdminHomeHeroImage,
   previewAdminEmailLetter,
   saveAdminBankConfig,
@@ -58,7 +59,7 @@ const lbl =
 const inp =
   'mt-1.5 w-full rounded-lg border border-[#2a2f3a] bg-[#121417] px-3.5 py-2.5 text-sm text-white shadow-inner shadow-black/20 outline-none transition placeholder:text-white/25 focus:border-[#3b82f6]/55 focus:ring-2 focus:ring-[#3b82f6]/20'
 
-function heroImagePreviewUrl(src: string): string {
+function bankMediaPreviewUrl(src: string): string {
   const s = src.trim()
   if (!s) return ''
   if (/^https?:\/\//i.test(s)) return s
@@ -393,6 +394,9 @@ export function AdminBankSettingsPage() {
   const [heroUploadBusy, setHeroUploadBusy] = useState(false)
   const [heroUploadErr, setHeroUploadErr] = useState('')
   const [heroPreviewKey, setHeroPreviewKey] = useState(0)
+  const [logoUploadBusy, setLogoUploadBusy] = useState(false)
+  const [logoUploadErr, setLogoUploadErr] = useState('')
+  const [logoPreviewKey, setLogoPreviewKey] = useState(0)
 
   const [smtpLoading, setSmtpLoading] = useState(true)
   const [smtpLoadErr, setSmtpLoadErr] = useState('')
@@ -1091,7 +1095,7 @@ export function AdminBankSettingsPage() {
                 id="section-brand"
                 step="02"
                 title="Brand & marketing"
-                description="Legal name, short name, home page hero, sign-in disclaimer, and header tagline shown to end users."
+                description="Legal name, short name, logo, home page hero, sign-in disclaimer, and header tagline shown to end users."
                 icon={<IconBuilding />}
               >
                 <div className="space-y-8">
@@ -1136,6 +1140,149 @@ export function AdminBankSettingsPage() {
                           }
                         />
                       </label>
+                    </div>
+                  </AdminFieldGroup>
+                  <AdminFieldGroup
+                    title="Logo mark"
+                    hint="Shown in the public header, signed-in app header, debit card illustration, operator sidebar, and admin login. Leave empty or remove to use the built-in mark. Use a square or wide logo on a transparent background for best results."
+                  >
+                    <label className="block">
+                      <span className={lbl}>Image URL or path</span>
+                      <input
+                        className={inp}
+                        value={draft.bankLogoSrc ?? ''}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            bankLogoSrc: e.target.value,
+                          })
+                        }
+                        placeholder="/logo.svg or https://… or upload below"
+                        autoComplete="off"
+                        spellCheck={false}
+                      />
+                    </label>
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <input
+                        id="admin-bank-logo-file"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="sr-only"
+                        onChange={() => setLogoUploadErr('')}
+                      />
+                      <label
+                        htmlFor="admin-bank-logo-file"
+                        className="inline-flex cursor-pointer rounded-lg border border-[#3b82f6]/50 bg-[#1e3a8a]/30 px-4 py-2.5 text-sm font-semibold text-slate-100 transition hover:border-[#3b82f6] hover:bg-[#1e3a8a]/50"
+                      >
+                        Choose logo…
+                      </label>
+                      <button
+                        type="button"
+                        disabled={logoUploadBusy}
+                        className="rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2563eb] disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={() => {
+                          const el = document.getElementById(
+                            'admin-bank-logo-file',
+                          ) as HTMLInputElement | null
+                          const f = el?.files?.[0]
+                          if (!f) {
+                            setLogoUploadErr(
+                              'Choose a JPEG, PNG, or WebP file first.',
+                            )
+                            return
+                          }
+                          setLogoUploadErr('')
+                          setLogoUploadBusy(true)
+                          void (async () => {
+                            try {
+                              const next = await postAdminBankLogo(f)
+                              setDraft(next)
+                              setLogoPreviewKey((k) => k + 1)
+                              if (el) el.value = ''
+                            } catch (e) {
+                              setLogoUploadErr(
+                                e instanceof Error
+                                  ? e.message
+                                  : 'Upload failed.',
+                              )
+                            } finally {
+                              setLogoUploadBusy(false)
+                            }
+                          })()
+                        }}
+                      >
+                        {logoUploadBusy ? 'Uploading…' : 'Upload & save'}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={logoUploadBusy || !draft.bankLogoSrc?.trim()}
+                        className="rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+                        onClick={() => {
+                          if (!draft.bankLogoSrc?.trim()) return
+                          setLogoUploadErr('')
+                          setLogoUploadBusy(true)
+                          void (async () => {
+                            try {
+                              const next = await saveAdminBankConfig({
+                                ...draft,
+                                bankLogoSrc: '',
+                              })
+                              setDraft(next)
+                              setLogoPreviewKey((k) => k + 1)
+                              const el = document.getElementById(
+                                'admin-bank-logo-file',
+                              ) as HTMLInputElement | null
+                              if (el) el.value = ''
+                            } catch (e) {
+                              setLogoUploadErr(
+                                e instanceof Error
+                                  ? e.message
+                                  : 'Could not remove logo.',
+                              )
+                            } finally {
+                              setLogoUploadBusy(false)
+                            }
+                          })()
+                        }}
+                      >
+                        Remove custom logo
+                      </button>
+                      {logoUploadErr ? (
+                        <span className="text-sm text-red-400">
+                          {logoUploadErr}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="mt-5">
+                      <p className={lbl}>Preview</p>
+                      <div className="mt-2 flex flex-wrap items-center gap-6 rounded-xl border border-[#2a2f3a] bg-[#0d0f12] px-6 py-8">
+                        {draft.bankLogoSrc?.trim() ? (
+                          <>
+                            <div className="rounded-xl bg-white/10 p-1 ring-1 ring-white/15">
+                              <img
+                                key={`logo-light-${draft.bankLogoSrc}-${logoPreviewKey}`}
+                                src={bankMediaPreviewUrl(draft.bankLogoSrc)}
+                                alt=""
+                                className="h-12 w-12 object-contain"
+                              />
+                            </div>
+                            <div className="rounded-xl bg-[#ebe6dd] p-1 ring-1 ring-bw-sand-200">
+                              <img
+                                key={`logo-dark-${draft.bankLogoSrc}-${logoPreviewKey}`}
+                                src={bankMediaPreviewUrl(draft.bankLogoSrc)}
+                                alt=""
+                                className="h-12 w-12 object-contain"
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-xs text-slate-500">
+                            Built-in mark is used when this field is empty. Upload
+                            or paste a URL to preview on light and neutral
+                            backgrounds.
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </AdminFieldGroup>
                   <AdminFieldGroup
@@ -1281,7 +1428,7 @@ export function AdminBankSettingsPage() {
                         {draft.homeHeroImageSrc.trim() ? (
                           <img
                             key={`${draft.homeHeroImageSrc}-${heroPreviewKey}`}
-                            src={heroImagePreviewUrl(draft.homeHeroImageSrc)}
+                            src={bankMediaPreviewUrl(draft.homeHeroImageSrc)}
                             alt=""
                             className="max-h-56 w-full object-cover object-center"
                           />

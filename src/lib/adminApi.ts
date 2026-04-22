@@ -409,6 +409,35 @@ export async function postAdminHomeHeroImage(file: File): Promise<BankConfig> {
   return data.config
 }
 
+/** Uploads bank logo; saves config with `bankLogoSrc` pointing at `/api/media/bank-logo.{jpg|png|webp}`. */
+export async function postAdminBankLogo(file: File): Promise<BankConfig> {
+  const t = getAdminToken()
+  if (!t) throw new Error('Not signed in.')
+  const { imageBase64, contentType } = await fileToBase64Payload(file)
+  const r = await fetch(`${getApiBase()}/api/admin/bank-config/bank-logo`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${t}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ imageBase64, contentType }),
+  })
+  const data = await readJsonBody<{
+    ok?: boolean
+    config?: BankConfig
+    error?: string
+  }>(r)
+  if (r.status === 401 || r.status === 403) {
+    clearAdminToken()
+    throw new Error(data.error ?? 'Session expired.')
+  }
+  if (!r.ok || !data.ok || !data.config) {
+    throw new Error(data.error ?? 'Upload failed.')
+  }
+  window.dispatchEvent(new Event('bank-config-updated'))
+  return data.config
+}
+
 export async function fetchAdminApprovals(params?: {
   status?: string
   limit?: number

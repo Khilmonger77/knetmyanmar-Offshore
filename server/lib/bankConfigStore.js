@@ -58,6 +58,17 @@ function validateBankConfig(c) {
   }
   if (/[<>"'`\s\\]/.test(heroSrc)) err('homeHeroImageSrc contains invalid characters.')
   c.homeHeroImageSrc = heroSrc
+  const logoSrc =
+    typeof c.bankLogoSrc === 'string' ? String(c.bankLogoSrc).trim() : ''
+  if (logoSrc) {
+    if (logoSrc.length > 500) err('bankLogoSrc is too long (max 500).')
+    if (!/^https?:\/\//i.test(logoSrc) && !logoSrc.startsWith('/')) {
+      err('bankLogoSrc must start with / (site path) or http(s)://.')
+    }
+    if (/[<>"'`\s\\]/.test(logoSrc))
+      err('bankLogoSrc contains invalid characters.')
+  }
+  c.bankLogoSrc = logoSrc
   reqStr(c.homeCtaTalk, 80, 'homeCtaTalk')
   reqStr(c.signInDisclaimer, 600, 'signInDisclaimer')
   reqStr(c.supportPhone, 40, 'supportPhone')

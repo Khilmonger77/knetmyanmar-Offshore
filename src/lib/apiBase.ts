@@ -32,3 +32,18 @@ export function getApiBase(): string {
 
   return base
 }
+
+/**
+ * For images and other static files under `/api/media/...` when the UI is on
+ * another origin (e.g. Netlify + API on a tunnel), prepend `VITE_API_BASE`.
+ */
+export function resolvePublicMediaUrl(src: string): string {
+  const s = String(src ?? '').trim()
+  if (!s) return ''
+  if (/^https?:\/\//i.test(s)) return s
+  if (s.startsWith('/api/')) {
+    const base = getApiBase().replace(/\/$/, '')
+    return base ? `${base}${s}` : s
+  }
+  return s
+}

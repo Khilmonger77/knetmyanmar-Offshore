@@ -8,8 +8,20 @@ import {
   type ReactNode,
 } from 'react'
 import rawDefaults from '../data/bank.defaults.json'
-import { getApiBase } from '../lib/apiBase'
+import { getApiBase, resolvePublicMediaUrl } from '../lib/apiBase'
 import type { BankConfig } from '../types/bankConfig'
+
+const DEFAULT_FAVICON_PATH = '/favicon.svg'
+
+function mimeForFavicon(urlPath: string): string {
+  const base = urlPath.split('?')[0]?.toLowerCase() ?? ''
+  if (base.endsWith('.svg')) return 'image/svg+xml'
+  if (base.endsWith('.png')) return 'image/png'
+  if (base.endsWith('.jpg') || base.endsWith('.jpeg')) return 'image/jpeg'
+  if (base.endsWith('.webp')) return 'image/webp'
+  if (base.endsWith('.ico')) return 'image/x-icon'
+  return 'image/png'
+}
 
 const FALLBACK = rawDefaults as BankConfig
 
@@ -50,6 +62,8 @@ export function BankConfigProvider({ children }: { children: ReactNode }) {
   const [bankConfigHydrated, setBankConfigHydrated] = useState(
     () => initialCached != null,
   )
+  /** Bumps when admin saves/uploads so browser refetches favicon (same URL can mean new bytes). */
+  const [faviconRev, setFaviconRev] = useState(0)
 
   const reload = useCallback(() => {
     const base = getApiBase()
@@ -85,6 +99,38 @@ export function BankConfigProvider({ children }: { children: ReactNode }) {
     window.addEventListener('bank-config-updated', reload)
     return () => window.removeEventListener('bank-config-updated', reload)
   }, [reload])
+
+  useEffect(() => {
+    const bump = () => setFaviconRev((n) => n + 1)
+    window.addEventListener('bank-config-updated', bump)
+    return () => window.removeEventListener('bank-config-updated', bump)
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!bankConfigHydrated) return
+    const raw = String(config.bankLogoSrc ?? '').trim()
+    const link =
+      (document.querySelector(
+        'link[rel="icon"]',
+      ) as HTMLLinkElement | null) ??
+      (() => {
+        const el = document.createElement('link')
+        el.rel = 'icon'
+        document.head.appendChild(el)
+        return el
+      })()
+
+    if (!raw) {
+      link.href = DEFAULT_FAVICON_PATH
+      link.type = 'image/svg+xml'
+      return
+    }
+
+    const resolved = resolvePublicMediaUrl(raw)
+    const sep = resolved.includes('?') ? '&' : '?'
+    link.href = `${resolved}${sep}v=${faviconRev}`
+    link.type = mimeForFavicon(raw)
+  }, [bankConfigHydrated, config.bankLogoSrc, faviconRev])
 
   useLayoutEffect(() => {
     if (!bankConfigHydrated) return

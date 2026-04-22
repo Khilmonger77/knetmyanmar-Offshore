@@ -11,6 +11,8 @@ type Props = {
   linkedAccountLine: string
   /** Issued as a virtual card (visual badge). */
   virtualBadge?: boolean
+  /** Institution logo URL/path from bank config (optional). */
+  institutionLogoSrc?: string
   className?: string
 }
 
@@ -46,6 +48,7 @@ export function DebitCardVisual({
   contactlessEnabled,
   linkedAccountLine,
   virtualBadge = false,
+  institutionLogoSrc,
   className = '',
 }: Props) {
   const name =
@@ -113,7 +116,12 @@ export function DebitCardVisual({
                   Virtual
                 </span>
               ) : null}
-              <LogoMark className="h-10 w-10 opacity-95" variant="dark" />
+              <LogoMark
+                className="h-10 w-10 opacity-95"
+                variant="dark"
+                imageSrc={institutionLogoSrc}
+                alt=""
+              />
             </div>
           </div>
 

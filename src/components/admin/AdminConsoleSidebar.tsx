@@ -1,4 +1,5 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useBankConfig } from '../../contexts/BankConfigContext'
 import { LogoMark } from '../LogoMark'
 import {
   ADMIN_SIDEBAR_PRIMARY_NAV,
@@ -25,10 +26,16 @@ function navIconClass(tone: 'primary' | 'muted') {
 }
 
 export function AdminSidebarBrand() {
+  const cfg = useBankConfig()
   return (
     <div className="flex items-center gap-2.5 border-b border-[#2a2f3a] px-4 py-3.5">
       <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#3b82f6]/20 ring-1 ring-[#3b82f6]/30">
-        <LogoMark className="h-4 w-4" variant="dark" />
+        <LogoMark
+          className="h-4 w-4 max-h-8 max-w-8"
+          variant="dark"
+          imageSrc={cfg.bankLogoSrc || undefined}
+          alt=""
+        />
       </div>
       <div className="min-w-0">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">

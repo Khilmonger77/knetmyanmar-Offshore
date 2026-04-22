@@ -27,6 +27,7 @@ server/data/support-tickets.json
 server/data/smtp-settings.json
 server/data/audit.log
 server/data/backups/
+server/data/media/
 
 # Editor directories and files
 .vscode/*

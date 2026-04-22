@@ -595,6 +595,100 @@ app.post(
   },
 )
 
+app.post(
+  '/api/admin/bank-config/bank-logo',
+  requireAdmin,
+  (req, res) => {
+    try {
+      const imageBase64 =
+        typeof req.body?.imageBase64 === 'string'
+          ? req.body.imageBase64.replace(/\s+/g, '')
+          : ''
+      if (!imageBase64) {
+        return res
+          .status(400)
+          .json({ ok: false, error: 'imageBase64 is required.' })
+      }
+      let buf
+      try {
+        buf = Buffer.from(imageBase64, 'base64')
+      } catch {
+        return res.status(400).json({ ok: false, error: 'Invalid base64.' })
+      }
+      if (buf.length > 4 * 1024 * 1024) {
+        return res
+          .status(400)
+          .json({ ok: false, error: 'Logo image too large (max 4 MB).' })
+      }
+      if (buf.length < 24) {
+        return res.status(400).json({ ok: false, error: 'Image too small.' })
+      }
+
+      let ext = ''
+      if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) ext = 'jpg'
+      else if (
+        buf[0] === 0x89 &&
+        buf[1] === 0x50 &&
+        buf[2] === 0x4e &&
+        buf[3] === 0x47
+      )
+        ext = 'png'
+      else if (
+        buf.slice(0, 4).toString('ascii') === 'RIFF' &&
+        buf.slice(8, 12).toString('ascii') === 'WEBP'
+      )
+        ext = 'webp'
+
+      if (!ext) {
+        return res.status(400).json({
+          ok: false,
+          error: 'Unsupported image format (use JPEG, PNG, or WebP).',
+        })
+      }
+
+      try {
+        const prev = fs.readdirSync(MEDIA_DIR)
+        for (const name of prev) {
+          if (name.startsWith('bank-logo.')) {
+            fs.unlinkSync(path.join(MEDIA_DIR, name))
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+
+      const filename = `bank-logo.${ext}`
+      fs.writeFileSync(path.join(MEDIA_DIR, filename), buf)
+
+      const publicPath = `/api/media/${filename}`
+      const next = saveBankConfigFromBody({
+        ...loadBankConfig(),
+        bankLogoSrc: publicPath,
+      })
+
+      writeAudit({
+        action: 'admin.bank_config.bank_logo',
+        actorType: 'admin',
+        actorId: 'bearer',
+        ip: clientIp(req),
+        meta: { bytes: buf.length, ext },
+      })
+
+      res.json({
+        ok: true,
+        bankLogoSrc: publicPath,
+        config: next,
+      })
+    } catch (e) {
+      const status = e.statusCode || 500
+      const msg = e instanceof Error ? e.message : 'Upload failed'
+      if (status >= 500)
+        console.error('[bank-config] bank logo upload failed:', e)
+      res.status(status).json({ ok: false, error: msg })
+    }
+  },
+)
+
 app.get('/api/admin/overview', requireAdmin, (_req, res) => {
   try {
     const customerCount = listCustomersForAdmin().length

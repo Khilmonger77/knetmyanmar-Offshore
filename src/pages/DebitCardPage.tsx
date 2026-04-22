@@ -184,6 +184,7 @@ export function DebitCardPage() {
             contactlessEnabled={debitCard.contactlessEnabled}
             linkedAccountLine={linkedLine}
             virtualBadge={debitCard.cardType === 'virtual'}
+            institutionLogoSrc={cfg.bankLogoSrc || undefined}
           />
           <p className="text-center text-xs text-bw-muted lg:text-left">
             Card art is illustrative. Contactless icon reflects your tap

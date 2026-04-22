@@ -1,6 +1,33 @@
-type Props = { className?: string; variant?: 'light' | 'dark' }
+import { resolvePublicMediaUrl } from '../lib/apiBase'
 
-export function LogoMark({ className = '', variant = 'light' }: Props) {
+type Props = {
+  className?: string
+  variant?: 'light' | 'dark'
+  /** Uploaded or external logo; when set, replaces the SVG mark. */
+  imageSrc?: string
+  alt?: string
+}
+
+export function LogoMark({
+  className = '',
+  variant = 'light',
+  imageSrc,
+  alt = '',
+}: Props) {
+  const resolved = imageSrc?.trim()
+    ? resolvePublicMediaUrl(imageSrc.trim())
+    : ''
+  if (resolved) {
+    return (
+      <img
+        src={resolved}
+        alt={alt}
+        className={`${className} object-contain`}
+        decoding="async"
+      />
+    )
+  }
+
   const fill = variant === 'light' ? '#E8DCC8' : '#0a2342'
   return (
     <svg
