@@ -1,0 +1,16 @@
+# Static SPA only — the Node API runs elsewhere (e.g. Render).
+# In Netlify: Site settings → Environment variables → add VITE_API_BASE=https://your-api.onrender.com
+# (no trailing slash). Match NOTIFY_ALLOWED_ORIGINS on the API to your Netlify URL (and custom domain).
+
+[build]
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Client-side routing (React Router): non-file paths serve index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,24 @@
+type Props = { className?: string; variant?: 'light' | 'dark' }
+
+export function LogoMark({ className = '', variant = 'light' }: Props) {
+  const fill = variant === 'light' ? '#E8DCC8' : '#0a2342'
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 40 40"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <rect
+        width="40"
+        height="40"
+        rx="8"
+        fill={variant === 'light' ? '#0a2342' : '#e8f2fb'}
+      />
+      <path
+        fill={fill}
+        d="M10 28V12h2.8l3.9 9h.1L20.6 12h2.8v16h-2.2V17.5h-.1L17 28h-1.8l-3.5-10.5h-.1V28H10zm15.5 0V12h4.6v16h-4.6z"
+      />
+    </svg>
+  )
+}

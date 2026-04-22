@@ -1,0 +1,92 @@
+{
+  "bankName": "Bywells Bank",
+  "bankNameShort": "Bywells",
+  "taglineHeader": "Banking that meets you where you are",
+  "homeEyebrow": "Bywells Bank",
+  "homeHeadline": "Confidence for every milestone—today and years from now.",
+  "homeSubtext": "Manage everyday spending, plan major purchases, and grow long-term wealth in one streamlined experience designed around your goals.",
+  "homeHeroImageSrc": "/home-hero-banking.jpg",
+  "homeCtaTalk": "Talk to Bywells",
+  "signInDisclaimer": "Sign in with your 10-digit Internet Banking ID or the email you used when you enrolled, plus your password. For your security, avoid shared or public computers when possible, and sign out when you are finished.",
+  "supportPhone": "1-800-555-1234",
+  "supportPhoneFraud": "1-800-555-9999",
+  "supportEmail": "support@bywells.com",
+  "supportHoursLine": "24/7 for card loss and fraud. Banking specialists 8am–10pm ET.",
+  "chatAgentName": "Riley",
+  "chatHeaderTitle": "Bywells chat",
+  "chatHeaderSubtitle": "Virtual banking support",
+  "investBrandName": "Bywells Invest",
+  "products": {
+    "checkingName": "Premier Checking",
+    "checkingMask": "4821",
+    "savingsName": "High Yield Savings",
+    "savingsMask": "9033",
+    "fundTotalMarket": "Bywells Total Market Index",
+    "fundInternational": "Bywells International Equity",
+    "fundCoreBond": "Bywells Core Bond",
+    "fundCashSweep": "Investment cash (sweep)"
+  },
+  "fees": {
+    "wireDomesticCents": 2500,
+    "wireInternationalCents": 5000,
+    "wireCotCents": 1500,
+    "wireImfCents": 1500,
+    "fxUsdPerEur": 1.08
+  },
+  "depositsAndFees": {
+    "manualDepositApprovalRequired": true,
+    "transactionFeesMode": "auto",
+    "maintenanceFeesMode": "manual",
+    "maintenanceFeeMonthlyCents": 0,
+    "incomingBankTransferFeeCents": 0,
+    "cardFundingFeeCents": 0,
+    "cryptoDepositFeeCents": 0,
+    "depositMethods": {
+      "bankTransfer": true,
+      "crypto": false,
+      "cardFunding": true
+    }
+  },
+  "withdrawals": {
+    "multiStepEnabled": false,
+    "secondStepThresholdCents": 2500000,
+    "maxSingleWithdrawalCents": null,
+    "maxDailyWithdrawalPerCustomerCents": null
+  },
+  "theme": {
+    "navy950": "#061428",
+    "navy900": "#0a2342",
+    "navy800": "#0f3460",
+    "blue600": "#1a5f9e",
+    "blue500": "#2b7fd0",
+    "sky100": "#e8f2fb",
+    "red800": "#7a1216",
+    "red700": "#9b1c21",
+    "red600": "#b82228",
+    "sand100": "#f6f3ee",
+    "sand200": "#ebe6dd",
+    "muted": "#5c6570"
+  },
+  "legalDemoFooter": "is a Member FDIC institution and an Equal Housing Lender. Deposits are insured up to applicable limits. Products, rates, and fees are subject to change and are subject to approval. Review current disclosures before opening an account or establishing credit.",
+  "legalCopyright": "All rights reserved.",
+  "mobileDepositEndorsement": "For mobile deposit only, Bywells Bank.",
+  "wireAuthLine": "By selecting Confirm, you authorize the bank to move this amount between your selected accounts.",
+  "wireDisclaimerFees": "Wire transfer fees, cutoffs, and delivery times vary by product and destination. Amounts shown reflect the fee schedule in effect for your account type; confirm totals before you authorize.",
+  "emailLetters": {
+    "otpSubjectTemplate": "{{bankName}} — sign-in verification code",
+    "otpInnerHtml": "<p style=\"margin:0 0 18px;color:#1e293b;font-size:15px;line-height:1.65\">{{greetingLine}}</p>\n<p style=\"margin:0 0 10px;color:#334155;font-size:14px;line-height:1.5\">Use this one-time code to verify your identity when signing in to Online Banking:</p>\n<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"margin:22px 0;border-collapse:separate;border-spacing:0\"><tr><td align=\"center\" style=\"background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:22px 20px\"><span style=\"font-family:Consolas,Menlo,Monaco,monospace;font-size:28px;font-weight:700;letter-spacing:0.42em;color:#0f172a;display:inline-block\">{{code}}</span></td></tr></table>\n<p style=\"margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55\">This code expires in <strong style=\"color:#334155\">{{expiryMinutes}}</strong> minutes. If you did not attempt to sign in, contact Fraud immediately at {{supportPhoneFraud}} or {{supportEmail}}.</p>",
+    "otpTextBody": "{{greetingLine}}\n\nYour sign-in verification code is: {{code}}\n\nThis code expires in {{expiryMinutes}} minutes.\n\nIf you did not attempt to sign in, contact Fraud at {{supportPhoneFraud}} or {{supportEmail}}.\n\n{{bankName}}",
+    "emailChangeSubjectTemplate": "{{bankName}} — verify your new email address",
+    "emailChangeInnerHtml": "<p style=\"margin:0 0 18px;color:#1e293b;font-size:15px;line-height:1.65\">{{greetingLine}}</p>\n<p style=\"margin:0 0 10px;color:#334155;font-size:14px;line-height:1.5\">Use this one-time code to confirm that you own this email address for Online Banking notifications and sign-in:</p>\n<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"margin:22px 0;border-collapse:separate;border-spacing:0\"><tr><td align=\"center\" style=\"background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:22px 20px\"><span style=\"font-family:Consolas,Menlo,Monaco,monospace;font-size:28px;font-weight:700;letter-spacing:0.42em;color:#0f172a;display:inline-block\">{{code}}</span></td></tr></table>\n<p style=\"margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55\">This code expires in <strong style=\"color:#334155\">{{expiryMinutes}}</strong> minutes. If you did not request an email change, contact Fraud at {{supportPhoneFraud}} or {{supportEmail}}.</p>",
+    "emailChangeTextBody": "{{greetingLine}}\n\nYour verification code to confirm this email address for Online Banking is: {{code}}\n\nThis code expires in {{expiryMinutes}} minutes.\n\nIf you did not request this change, contact Fraud at {{supportPhoneFraud}} or {{supportEmail}}.\n\n{{bankName}}",
+    "kycNotifySubjectTemplate": "{{bankName}} — New identity verification submission ({{submissionId}})",
+    "kycNotifyInnerHtml": "<p style=\"margin:0 0 14px;color:#1e293b;font-size:15px;line-height:1.6\">A customer has submitted identity documents through Online Banking.</p>\n<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"margin:16px 0;border-collapse:collapse;font-size:14px;color:#334155\"><tr><td style=\"padding:8px 0;border-bottom:1px solid #e2e8f0\"><strong>Submission ID</strong></td><td style=\"padding:8px 0;border-bottom:1px solid #e2e8f0;text-align:right;font-family:monospace\">{{submissionId}}</td></tr><tr><td style=\"padding:8px 0;border-bottom:1px solid #e2e8f0\"><strong>Customer name</strong></td><td style=\"padding:8px 0;border-bottom:1px solid #e2e8f0;text-align:right\">{{displayName}}</td></tr><tr><td style=\"padding:8px 0\"><strong>Customer email</strong></td><td style=\"padding:8px 0;text-align:right\">{{customerEmail}}</td></tr></table>\n<p style=\"margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55\">Review this package in the operator console under <strong>KYC verification</strong>.</p>",
+    "kycNotifyTextBody": "New KYC submission.\n\nSubmission ID: {{submissionId}}\nCustomer: {{displayName}}\nEmail: {{customerEmail}}\n\nReview in operator console → KYC verification.\n\n{{bankName}}",
+    "testSubjectTemplate": "{{bankName}} — Email delivery test",
+    "testInnerHtml": "<p style=\"margin:0 0 14px;color:#1e293b;font-size:15px;line-height:1.65\">{{greetingLine}}</p>\n<p style=\"margin:0;color:#334155;font-size:14px;line-height:1.55\">This is an automated test message confirming that outbound email is configured correctly for {{bankName}} Online Banking notifications.</p>\n<p style=\"margin:18px 0 0;color:#475569;font-size:14px;line-height:1.55\">If you requested this test, no further action is required. Otherwise, contact {{supportEmail}}.</p>",
+    "testTextBody": "{{greetingLine}}\n\nThis is a test message from {{bankName}} confirming SMTP is configured.\n\nSupport: {{supportEmail}}\n\nRole: {{displayName}}",
+    "wireTransferOtpSubjectTemplate": "{{bankName}} — authorize your wire transfer",
+    "wireTransferOtpInnerHtml": "<p style=\"margin:0 0 18px;color:#1e293b;font-size:15px;line-height:1.65\">{{greetingLine}}</p>\n<p style=\"margin:0 0 10px;color:#334155;font-size:14px;line-height:1.5\">Use this one-time code to authorize an outgoing wire transfer request from Online Banking:</p>\n<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"margin:22px 0;border-collapse:separate;border-spacing:0\"><tr><td align=\"center\" style=\"background:#f8fafc;border:2px solid #e2e8f0;border-radius:10px;padding:22px 20px\"><span style=\"font-family:Consolas,Menlo,Monaco,monospace;font-size:28px;font-weight:700;letter-spacing:0.42em;color:#0f172a;display:inline-block\">{{code}}</span></td></tr></table>\n<p style=\"margin:18px 0 0;color:#64748b;font-size:13px;line-height:1.55\">This code expires in <strong style=\"color:#334155\">{{expiryMinutes}}</strong> minutes. If you did not request a wire transfer, contact Fraud immediately at {{supportPhoneFraud}} or {{supportEmail}}.</p>",
+    "wireTransferOtpTextBody": "{{greetingLine}}\n\nYour wire transfer authorization code is: {{code}}\n\nThis code expires in {{expiryMinutes}} minutes.\n\nIf you did not request a wire transfer, contact Fraud at {{supportPhoneFraud}} or {{supportEmail}}.\n\n{{bankName}}"
+  }
+}

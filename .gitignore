@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Mail service credentials (never commit)
+server/.env
+
+# Live bank branding / copy (operator edits); defaults stay in src/data/bank.defaults.json
+server/data/bank-config.json
+server/data/approvals.json
+server/data/kyc-submissions.json
+server/data/kyc-uploads/
+server/data/users-store.json
+server/data/login-challenges.json
+server/data/email-change-challenges.json
+server/data/support-tickets.json
+server/data/smtp-settings.json
+server/data/audit.log
+server/data/backups/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

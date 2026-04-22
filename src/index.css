@@ -1,0 +1,134 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  --color-bw-navy-950: #061428;
+  --color-bw-navy-900: #0a2342;
+  --color-bw-navy-800: #0f3460;
+  --color-bw-blue-600: #1a5f9e;
+  --color-bw-blue-500: #2b7fd0;
+  --color-bw-sky-100: #e8f2fb;
+
+  --color-bw-red-800: #7a1216;
+  --color-bw-red-700: #9b1c21;
+  --color-bw-red-600: #b82228;
+
+  --color-bw-sand-100: #f6f3ee;
+  --color-bw-sand-200: #ebe6dd;
+  --color-bw-muted: #5c6570;
+
+  /* Elevation — use as shadow-bw-soft, shadow-bw-card, shadow-bw-glow */
+  --shadow-bw-soft: 0 4px 24px -6px rgb(10 35 66 / 0.08);
+  --shadow-bw-card: 0 16px 48px -20px rgb(10 35 66 / 0.14);
+  --shadow-bw-glow: 0 0 0 1px rgb(255 255 255 / 0.08) inset,
+    0 24px 64px -24px rgb(10 35 66 / 0.35);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-bw-sand-100);
+  color: var(--color-bw-navy-950);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+@keyframes bw-cancel-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes bw-cancel-pop {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Sign-in: page and overlay */
+@keyframes bw-signin-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bw-signin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bw-signin-success-pop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bw-signin-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bw-signin-dots {
+  0%,
+  20% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes bw-signin-enter {
+    from {
+      opacity: 0.85;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

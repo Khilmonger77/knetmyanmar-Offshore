@@ -1,0 +1,6 @@
+{
+  "skipLoginEmailOtp": false,
+  "requireLoginEmailOtp": true,
+  "skipWireEmailOtp": false,
+  "updatedAt": "2026-04-19T05:30:26.861Z"
+}
