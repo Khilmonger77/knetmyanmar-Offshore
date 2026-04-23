@@ -23,18 +23,17 @@ export function formatActivityListDate(row: ActivityRow): string {
   if (booked) {
     const ms = Date.parse(booked)
     if (!Number.isNaN(ms)) {
-      return (
-        new Intl.DateTimeFormat('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: true,
-          timeZone: 'UTC',
-        }).format(new Date(ms)) + ' UTC'
-      )
+      // Same wall clock as the admin datetime-local picker and the viewer's browser
+      // (do not force UTC or the calendar year/day can shift vs what was chosen).
+      return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+      }).format(new Date(ms))
     }
   }
   const posted = typeof row.postedAt === 'string' ? row.postedAt.trim() : ''

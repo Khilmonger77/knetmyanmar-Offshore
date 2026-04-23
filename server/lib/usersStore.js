@@ -806,9 +806,9 @@ function normalizeActivityRowDateLabel(row) {
   const bookedRaw =
     typeof row.bookedAt === 'string' ? row.bookedAt.trim() : ''
   if (bookedRaw) {
-    const ms = Date.parse(bookedRaw)
-    if (!Number.isNaN(ms)) {
-      out.dateLabel = activityDateLabelFromDate(new Date(ms))
+    const label = isoToActivityDateLabel(bookedRaw)
+    if (label) {
+      out.dateLabel = label
       return out
     }
   }
@@ -1332,21 +1332,6 @@ function adminActivityUid() {
   return `adm_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`
 }
 
-function activityDateLabelFromDate(d) {
-  return (
-    new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      timeZone: 'UTC',
-    }).format(d) + ' UTC'
-  )
-}
-
 /**
  * @param {{ postedOn?: string, bookedAt?: string }} opts
  * @returns {{ bookedAt: string, dateLabel: string }}
@@ -1372,7 +1357,10 @@ function resolveOperatorActivityTimestamps(opts) {
       err('bookedAt must be between 2000-01-01 and the current time (server clock).')
     }
     const d = new Date(ms)
-    return { bookedAt: d.toISOString(), dateLabel: activityDateLabelFromDate(d) }
+    return {
+      bookedAt: d.toISOString(),
+      dateLabel: isoToActivityDateLabel(d.toISOString()),
+    }
   }
 
   if (postedOn) {
@@ -1395,12 +1383,15 @@ function resolveOperatorActivityTimestamps(opts) {
     if (postedOn < '2000-01-01' || postedOn > todayUtc) {
       err('postedOn must be between 2000-01-01 and today (UTC calendar date).')
     }
-    return { bookedAt: chk.toISOString(), dateLabel: activityDateLabelFromDate(chk) }
+    return {
+      bookedAt: chk.toISOString(),
+      dateLabel: isoToActivityDateLabel(chk.toISOString()),
+    }
   }
 
   return {
     bookedAt: now.toISOString(),
-    dateLabel: activityDateLabelFromDate(now),
+    dateLabel: isoToActivityDateLabel(now.toISOString()),
   }
 }
 

@@ -702,7 +702,9 @@ export function AdminCustomerDetailPage() {
               and activity (dashboard refreshes within a few seconds). Optionally set
               when the entry <span className="text-slate-400">occurred</span> using
               the date and time below (your device timezone); it is stored as an
-              instant and shown in activity with full date and time (UTC). Operator
+              instant and shown in activity using each viewer&apos;s local date and
+              time (same calendar day and year you pick here when you use this
+              browser). Operator
               credits and debits also appear under{' '}
               <Link
                 to="/admin/transactions?view=history"
@@ -802,7 +804,7 @@ export function AdminCustomerDetailPage() {
               />
               <p className="mt-1 text-[11px] text-slate-600">
                 Leave blank to post as now. Must not be in the future. Activity shows
-                date, year, and time in UTC.
+                full date, year, and time in the customer&apos;s local timezone.
               </p>
             </div>
             <div className="mt-4">
