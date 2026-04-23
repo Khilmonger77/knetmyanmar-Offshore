@@ -5,11 +5,24 @@
  * forwards to NOTIFY_PORT. If `VITE_API_BASE` is set to this dev server’s origin
  * (e.g. `http://localhost:5173`), some setups return HTML 404 instead of JSON —
  * we treat that as “use the proxy” and return an empty base.
+ *
+ * **Origin only:** `https://api.example.com` — not `https://host/api` (we strip a
+ * trailing `/api` so paths don’t become `/api/api/...` → 404).
  */
+function normalizeConfiguredApiOrigin(raw: string): string {
+  let s = String(raw).trim().replace(/\/+$/, '')
+  // Netlify/env mistake: full API prefix pasted — would duplicate `/api` in callers
+  if (/\/api\/?$/i.test(s)) {
+    s = s.replace(/\/api\/?$/i, '')
+    s = s.replace(/\/+$/, '')
+  }
+  return s
+}
+
 export function getApiBase(): string {
   const raw =
     import.meta.env.VITE_API_BASE ?? import.meta.env.VITE_NOTIFY_API_BASE ?? ''
-  const base = String(raw).replace(/\/$/, '')
+  const base = normalizeConfiguredApiOrigin(raw)
 
   if (!import.meta.env.DEV) {
     return base
