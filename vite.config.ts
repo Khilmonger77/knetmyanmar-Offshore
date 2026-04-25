@@ -8,6 +8,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 /** Same file + precedence as `server/index.js` (dotenv does not override existing env vars). */
@@ -163,9 +165,5 @@ function bywellsApiProxyPlugin(target: string): Plugin {
 }
 
 export default defineConfig({
-  plugins: [
-    bywellsApiProxyPlugin(apiTarget),
-    react(),
-    tailwindcss(),
-  ],
+  plugins: [bywellsApiProxyPlugin(apiTarget), react(), tailwindcss(), cloudflare()],
 })
