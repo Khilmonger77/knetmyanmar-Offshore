@@ -83,6 +83,8 @@ import {
   sendKycSubmissionNotifyEmail,
   sendLoginOtpEmail,
   sendNotifyTestLetter,
+  sendOnlineBankingRestrictedNoticeEmail,
+  sendOnlineBankingUnrestrictedNoticeEmail,
   sendWireTransferOtpEmail,
 } from './lib/mailTransactional.js'
 import {
@@ -873,40 +875,113 @@ app.patch('/api/admin/customers/:userId', requireAdmin, (req, res) => {
   }
 })
 
-app.patch('/api/admin/customers/:userId/access', requireAdmin, (req, res) => {
-  try {
-    const userId =
-      typeof req.params.userId === 'string' ? req.params.userId.trim() : ''
-    if (!userId) {
-      return res.status(400).json({ ok: false, error: 'userId is required.' })
+app.patch(
+  '/api/admin/customers/:userId/access',
+  requireAdmin,
+  async (req, res) => {
+    try {
+      const userId =
+        typeof req.params.userId === 'string' ? req.params.userId.trim() : ''
+      if (!userId) {
+        return res.status(400).json({ ok: false, error: 'userId is required.' })
+      }
+      const restricted = Boolean(req.body?.restricted)
+      const reason =
+        typeof req.body?.reason === 'string' ? req.body.reason.trim() : ''
+      const before = getOnlineBankingRestriction(userId)
+      const next = setOnlineBankingRestriction(userId, {
+        restricted,
+        reason: restricted ? reason || null : null,
+      })
+
+      /** @type {string | null} */
+      let lockoutEmailNotice = null
+      /** @type {string | null} */
+      let unlockEmailNotice = null
+
+      if (next.restricted && !before.restricted) {
+        const internal = getInternalUser(userId)
+        const to =
+          typeof internal?.email === 'string' ? internal.email.trim() : ''
+        if (!to) {
+          lockoutEmailNotice = 'skipped_no_recipient'
+        } else {
+          const mailCfg = smtpFromEnv()
+          if (!isMailReady(mailCfg)) {
+            lockoutEmailNotice = 'skipped_no_smtp'
+            console.warn(
+              '[mail] online banking lockout: SMTP not configured; customer notice email not sent.',
+            )
+          } else {
+            try {
+              await sendOnlineBankingRestrictedNoticeEmail({
+                to,
+                displayName: internal.displayName,
+                reason: next.reason,
+              })
+              lockoutEmailNotice = 'sent'
+            } catch (e) {
+              console.error('[mail] online banking lockout email failed:', e)
+              lockoutEmailNotice = 'skipped_send_failed'
+            }
+          }
+        }
+      } else if (!next.restricted && before.restricted) {
+        const internal = getInternalUser(userId)
+        const to =
+          typeof internal?.email === 'string' ? internal.email.trim() : ''
+        if (!to) {
+          unlockEmailNotice = 'skipped_no_recipient'
+        } else {
+          const mailCfg = smtpFromEnv()
+          if (!isMailReady(mailCfg)) {
+            unlockEmailNotice = 'skipped_no_smtp'
+            console.warn(
+              '[mail] online banking unlock: SMTP not configured; customer notice email not sent.',
+            )
+          } else {
+            try {
+              await sendOnlineBankingUnrestrictedNoticeEmail({
+                to,
+                displayName: internal.displayName,
+              })
+              unlockEmailNotice = 'sent'
+            } catch (e) {
+              console.error('[mail] online banking unlock email failed:', e)
+              unlockEmailNotice = 'skipped_send_failed'
+            }
+          }
+        }
+      }
+
+      writeAudit({
+        action: 'admin.customer.access_restriction',
+        actorType: 'admin',
+        actorId: 'bearer',
+        target: userId,
+        meta: {
+          restricted: next.restricted,
+          hasReason: Boolean(next.reason),
+          ...(lockoutEmailNotice ? { lockoutEmailNotice } : {}),
+          ...(unlockEmailNotice ? { unlockEmailNotice } : {}),
+        },
+        ip: clientIp(req),
+      })
+      res.json({
+        ok: true,
+        onlineBankingRestricted: next.restricted,
+        onlineBankingRestrictionReason: next.reason,
+        ...(lockoutEmailNotice ? { lockoutEmailNotice } : {}),
+        ...(unlockEmailNotice ? { unlockEmailNotice } : {}),
+      })
+    } catch (e) {
+      const status = e.statusCode || 500
+      const msg = e instanceof Error ? e.message : 'Update failed'
+      if (status >= 500) console.error('[admin] customer access patch failed:', e)
+      res.status(status).json({ ok: false, error: msg })
     }
-    const restricted = Boolean(req.body?.restricted)
-    const reason =
-      typeof req.body?.reason === 'string' ? req.body.reason.trim() : ''
-    const next = setOnlineBankingRestriction(userId, {
-      restricted,
-      reason: restricted ? reason || null : null,
-    })
-    writeAudit({
-      action: 'admin.customer.access_restriction',
-      actorType: 'admin',
-      actorId: 'bearer',
-      target: userId,
-      meta: { restricted: next.restricted, hasReason: Boolean(next.reason) },
-      ip: clientIp(req),
-    })
-    res.json({
-      ok: true,
-      onlineBankingRestricted: next.restricted,
-      onlineBankingRestrictionReason: next.reason,
-    })
-  } catch (e) {
-    const status = e.statusCode || 500
-    const msg = e instanceof Error ? e.message : 'Update failed'
-    if (status >= 500) console.error('[admin] customer access patch failed:', e)
-    res.status(status).json({ ok: false, error: msg })
-  }
-})
+  },
+)
 
 app.get('/api/admin/cards', requireAdmin, (_req, res) => {
   try {

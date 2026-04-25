@@ -971,12 +971,24 @@ export async function patchAdminCustomer(
   return data.customer
 }
 
+/** Email outcome when access restriction is applied or removed. */
+export type AccessEmailNotice =
+  | 'sent'
+  | 'skipped_no_recipient'
+  | 'skipped_no_smtp'
+  | 'skipped_send_failed'
+
+/** @deprecated use AccessEmailNotice */
+export type LockoutEmailNotice = AccessEmailNotice
+
 export async function patchAdminCustomerAccess(
   userId: string,
   body: { restricted: boolean; reason?: string },
 ): Promise<{
   onlineBankingRestricted: boolean
   onlineBankingRestrictionReason: string | null
+  lockoutEmailNotice?: AccessEmailNotice
+  unlockEmailNotice?: AccessEmailNotice
 }> {
   const t = getAdminToken()
   if (!t) throw new Error('Not signed in.')
@@ -993,6 +1005,8 @@ export async function patchAdminCustomerAccess(
     ok?: boolean
     onlineBankingRestricted?: boolean
     onlineBankingRestrictionReason?: string | null
+    lockoutEmailNotice?: AccessEmailNotice
+    unlockEmailNotice?: AccessEmailNotice
     error?: string
   }>(r)
   if (r.status === 401 || r.status === 403) {
@@ -1022,6 +1036,8 @@ export async function patchAdminCustomerAccess(
       typeof data.onlineBankingRestrictionReason === 'string'
         ? data.onlineBankingRestrictionReason
         : null,
+    ...(data.lockoutEmailNotice ? { lockoutEmailNotice: data.lockoutEmailNotice } : {}),
+    ...(data.unlockEmailNotice ? { unlockEmailNotice: data.unlockEmailNotice } : {}),
   }
 }
 

@@ -447,11 +447,11 @@ export function AdminCustomerDetailPage() {
               Fraud &amp; security — online banking access
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-amber-100/75">
-              When restricted, the customer cannot sign in to online banking or
-              use any signed-in session. Active sessions are ended immediately.
-              They are shown your optional message on the sign-in screen and must
-              contact support (by email) before access can be restored. Lift the
-              hold only after your review is complete.
+              When you first restrict access, the customer receives a suspension
+              email (if outbound mail is configured). When you lift the hold,
+              they receive a restoration email the same way. They cannot sign in
+              while restricted; active sessions end immediately. Your optional
+              message appears on the sign-in screen and in the suspension email.
             </p>
             {accessErr ? (
               <p
@@ -516,11 +516,63 @@ export function AdminCustomerDetailPage() {
                   setAccessErr('')
                   setAccessOk('')
                   try {
-                    await patchAdminCustomerAccess(id, {
+                    const accessRes = await patchAdminCustomerAccess(id, {
                       restricted: accessRestricted,
                       reason: accessReason,
                     })
-                    setAccessOk('Access settings saved.')
+                    if (accessRes.unlockEmailNotice === 'sent') {
+                      setAccessOk(
+                        'Access settings saved. The customer was sent an email that online banking is restored.',
+                      )
+                    } else if (
+                      !accessRestricted &&
+                      accessRes.unlockEmailNotice === 'skipped_no_smtp'
+                    ) {
+                      setAccessOk(
+                        'Access settings saved. Outbound email is not configured — no unlock notice was sent.',
+                      )
+                    } else if (
+                      !accessRestricted &&
+                      accessRes.unlockEmailNotice === 'skipped_send_failed'
+                    ) {
+                      setAccessOk(
+                        'Access settings saved. The unlock notice email could not be sent (check server logs and SMTP).',
+                      )
+                    } else if (
+                      !accessRestricted &&
+                      accessRes.unlockEmailNotice === 'skipped_no_recipient'
+                    ) {
+                      setAccessOk(
+                        'Access settings saved. No customer email on file — unlock notice was not sent.',
+                      )
+                    } else if (accessRes.lockoutEmailNotice === 'sent') {
+                      setAccessOk(
+                        'Access settings saved. The customer was sent an email about the suspension.',
+                      )
+                    } else if (
+                      accessRestricted &&
+                      accessRes.lockoutEmailNotice === 'skipped_no_smtp'
+                    ) {
+                      setAccessOk(
+                        'Access settings saved. Outbound email is not configured on the server, so no notice email was sent.',
+                      )
+                    } else if (
+                      accessRestricted &&
+                      accessRes.lockoutEmailNotice === 'skipped_send_failed'
+                    ) {
+                      setAccessOk(
+                        'Access settings saved. The suspension notice email could not be sent (check server logs and SMTP).',
+                      )
+                    } else if (
+                      accessRestricted &&
+                      accessRes.lockoutEmailNotice === 'skipped_no_recipient'
+                    ) {
+                      setAccessOk(
+                        'Access settings saved. No customer email on file — suspension notice was not sent.',
+                      )
+                    } else {
+                      setAccessOk('Access settings saved.')
+                    }
                     setDetail(await fetchAdminCustomer(id))
                   } catch (e) {
                     setAccessErr(
